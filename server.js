@@ -17,7 +17,6 @@ const sendResponse = (filename, statusCode, response) => {
   });
 };
 const server = http.createServer((request, response) => {
-  console.log(request.url, request.method);
   const method = request.method;
   let url = request.url;
 
