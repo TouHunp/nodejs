@@ -1,6 +1,8 @@
 const http = require("http");
 const fs = require("fs");
 const qs = require("querystring");
+const express = require("express");
+let app = express();
 const port = 3000;
 const ip = "127.0.0.1";
 const sendResponse = (filename, statusCode, response) => {
@@ -72,4 +74,14 @@ const server = http.createServer((request, response) => {
 
 server.listen(port, ip, () => {
   console.log("server is running at http://" + ip + ":" + port);
+});
+
+//api
+//const port2 = 8080;
+app.get("/json_data", function (req, res) {
+  const data = require("./data.json");
+  res.json(data);
+});
+app.listen(8080, () => {
+  console.log(`server is running at http://localhost:8080`);
 });
