@@ -60,7 +60,7 @@ const server = http.createServer((request, response) => {
         body = qs.parse(body);
         console.log(body);
         if (body.username === "john" && body.password === "john123") {
-          response.statusCode = 301;
+          response.statusCode = 301; //3XX 重新導向類
           response.setHeader("Location", "/login-success.html");
         } else {
           response.statusCode = 301;
@@ -96,6 +96,52 @@ app.use(express.json());
 app.post("/handle", function (req, res) {
   console.log(req.body);
   res.json(req.body);
+});
+//回傳?name=xxx的json檔案 ./表示絕對路徑,與server.js同個目錄
+app.get("/json_file", (req, res) => {
+  try {
+    let data = fs.readFileSync(`./${req.query.name}.json`);
+    res.json(JSON.parse(data));
+  } catch (err) {
+    console.error(err);
+    res.send({ error: err.toString() });
+  }
+});
+//修改指定json檔案,不存在則新增
+app.post("/json_file", (req, res) => {
+  try {
+    const fileName = "./" + req.query.name + ".json";
+    bodyData = req.body;
+    fs.open(fileName, "r", (err, fd) => {
+      //r 表示打開文件讀取並在文件不存在時拋出異常。
+      if (err) {
+        fs.writeFile(fileName, JSON.stringify(bodyData), (err) => {
+          //如果讀取到err 則新增檔案
+          if (err) console.log(err);
+        }); // Create new file
+      } else {
+        let fileContent = JSON.parse(fs.readFileSync(fileName, "utf8")); // 讀取
+        Object.keys(bodyData).forEach((key) => {
+          fileContent[key] = bodyData[key];
+        });
+        fs.writeFileSync(fileName, JSON.stringify(fileContent)); // 寫入
+      }
+    });
+    res.send({ success: "File successfully updated." });
+  } catch (err) {
+    console.log(err);
+    res.send({ error: "Update json file failed." });
+  }
+});
+//刪除指定json檔案
+app.delete("/json_file", (req, res) => {
+  try {
+    fs.unlinkSync(__dirname + "/" + req.query.name + ".json");
+    res.send({ success: "File deleted." });
+  } catch (err) {
+    console.log(err);
+    res.send({ error: "Delete file failed." });
+  }
 });
 //監聽8080port
 app.listen(8080, () => {
