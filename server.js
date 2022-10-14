@@ -120,11 +120,15 @@ app.post("/json_file", (req, res) => {
           if (err) console.log(err);
         }); // Create new file
       } else {
-        let fileContent = JSON.parse(fs.readFileSync(fileName, "utf8")); // 讀取
+        let fileContent = JSON.parse(fs.readFileSync(fileName, "utf8")); // 將json分析讀取
         Object.keys(bodyData).forEach((key) => {
+          //key = title,id... 將key依序比對
+          console.log(key);
+          console.log(fileContent[key]);
+          console.log(bodyData[key]);
           fileContent[key] = bodyData[key];
         });
-        fs.writeFileSync(fileName, JSON.stringify(fileContent)); // 寫入
+        fs.writeFileSync(fileName, JSON.stringify(fileContent)); // 將fileContent寫入檔案
       }
     });
     res.send({ success: "File successfully updated." });
