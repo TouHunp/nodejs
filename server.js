@@ -136,7 +136,7 @@ app.post("/json_file", (req, res) => {
 //刪除指定json檔案
 app.delete("/json_file", (req, res) => {
   try {
-    fs.unlinkSync(__dirname + "/" + req.query.name + ".json");
+    fs.unlinkSync("./" + req.query.name + ".json");
     res.send({ success: "File deleted." });
   } catch (err) {
     console.log(err);
